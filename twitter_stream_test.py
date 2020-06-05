@@ -30,8 +30,8 @@ with open(class_path, 'r') as f:
 # pre-define color scheme
 COLORS = np.random.uniform(0, 255, size=(len(classes), 3))
 
-auth = tweepy.OAuthHandler('vwxlnP5SclOUAyE4JqgDMwkxx', 'FaPP7mPYHRhL4Drii8wvw6Qbcj3SUcG3ImDCB8RqkVof9F55cD')
-auth.set_access_token('945213054-GEDcrnXhEwsUdC39H1LUIv5VUXOhTgEyCpi2gUXt', 'hRsPy8LNf1sfsoUggwtFZzDpIHyGcOdhv1Dx5b9xi5emp')
+auth = tweepy.OAuthHandler('')
+auth.set_access_token('')
 
 api = tweepy.API(auth)
 
