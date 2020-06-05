@@ -14,6 +14,8 @@ weight_path = scripty_path + '/yolo_model/yolov3.weights'
 class_path = scripty_path + '/yolo_model/yolov3.txt'
 # build net
 net = cv2.dnn.readNet(weight_path, config_path)
+# build output layer
+output_layers = fun.get_output_layers(net)
 
 # define classes
 classes = None
@@ -35,7 +37,7 @@ while(True):
     ret, frame = vidcap.read()
 
     # Our operations on the frame come here
-    image_o, class_ids = fun.object_identification(frame, classes, net, COLORS)
+    image_o, class_ids = fun.object_identification(frame, classes, net, output_layers, COLORS)
     print('Cars: {}'.format(class_ids.count(2)))
     print('Trucks: {}'.format(class_ids.count(7)))
     

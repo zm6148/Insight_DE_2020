@@ -136,7 +136,7 @@ def draw_prediction(img, confidence, x, y, x_plus_w, y_plus_h, label, color):
     cv2.putText(img, label, (x-10,y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
     
     
-def object_identification(image, classes, net, COLORS):
+def object_identification(image, classes, net, output_layers, COLORS):
     
     #image = cv2.imread(input_image_path)
     Width = image.shape[1]
@@ -149,7 +149,7 @@ def object_identification(image, classes, net, COLORS):
     scale = 0.00392
     blob = cv2.dnn.blobFromImage(image, scale, (416,416), (0,0,0), True, crop=False)
     net.setInput(blob)
-    outs = net.forward(get_output_layers(net))
+    outs = net.forward(output_layers)
     
     class_ids = []
     confidences = []

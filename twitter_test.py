@@ -14,6 +14,8 @@ weight_path = scripty_path + '/yolo_model/yolov3.weights'
 class_path = scripty_path + '/yolo_model/yolov3.txt'
 # build net
 net = cv2.dnn.readNet(weight_path, config_path)
+# build output layer
+output_layers = fun.get_output_layers(net)
 
 # config face
 # read in target face, known faces, and trained weapon detection model
@@ -34,11 +36,11 @@ api = tweepy.API(auth)
 
 
 tweets = tweepy.Cursor(api.search,
-                           q="clint",
-                           count=10,
+                           q="protest",
+                           count=100,
                            result_type="recent",
                            include_entities=True,
-                           lang="en").items(10)
+                           lang="en").items(100)
    
 media_files = set()
 for status in tweets:
@@ -52,7 +54,7 @@ url_response = urllib.urlopen(url)
 image = np.asarray(bytearray(url_response.read()), dtype="uint8")
 image = cv2.imdecode(image, cv2.IMREAD_COLOR)
 # object
-image_o, class_ids = fun.object_identification(image, classes, net, COLORS)
+image_o, class_ids = fun.object_identification(image, classes, net, output_layers, COLORS)
 # face
 face_names, image_f, match_face = fun.classify_face(image_o, known_faces)
 

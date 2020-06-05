@@ -14,6 +14,8 @@ weight_path = scripty_path + '/yolo_model/yolov3.weights'
 class_path = scripty_path + '/yolo_model/yolov3.txt'
 # build net
 net = cv2.dnn.readNet(weight_path, config_path)
+# build output layer
+output_layers = fun.get_output_layers(net)
 
 # config face
 # read in target face, known faces, and trained weapon detection model
@@ -34,9 +36,10 @@ auth.set_access_token('945213054-GEDcrnXhEwsUdC39H1LUIv5VUXOhTgEyCpi2gUXt', 'hRs
 api = tweepy.API(auth)
 
 class MyStreamListener(tweepy.StreamListener):
-
+    
     def on_status(self, status):
         media = status.entities.get('media', [])
+        urls =set()
         if(len(media) > 0):
             url = media[0]['media_url']
             print(url)
@@ -45,17 +48,19 @@ class MyStreamListener(tweepy.StreamListener):
             print(status.place)
             print(status.geo)
             # Our operations on the frame come here
-            url_response = urllib.urlopen(url)
-            image = np.asarray(bytearray(url_response.read()), dtype="uint8")
-            image = cv2.imdecode(image, cv2.IMREAD_COLOR)
-            # object
-            image_o, class_ids = fun.object_identification(image, classes, net, COLORS)
-            # face
-            face_names, image_f, match_face = fun.classify_face(image_o, known_faces)
-    
-            # Display the resulting frame
-            cv2.imshow('frame',image_o)
-            cv2.waitKey(1)
+            if url not in urls:
+                urls.add(url)
+                url_response = urllib.urlopen(url)
+                image = np.asarray(bytearray(url_response.read()), dtype="uint8")
+                image = cv2.imdecode(image, cv2.IMREAD_COLOR)
+                # object
+                image_o, class_ids = fun.object_identification(image, classes, net, output_layers, COLORS)
+                # face
+                face_names, image_f, match_face = fun.classify_face(image_o, known_faces)
+        
+                # Display the resulting frame
+                cv2.imshow('frame',image_o)
+                cv2.waitKey(1)
         
     
     def on_error(self, status_code):
@@ -65,7 +70,7 @@ class MyStreamListener(tweepy.StreamListener):
         
 myStreamListener = MyStreamListener()
 myStream = tweepy.Stream(auth = api.auth, listener=myStreamListener)
-myStream.filter(track=['covid-19'])
+myStream.filter(track=['protest'])
 
 # class StreamListener(tweepy.StreamListener):
 #     def on_status(self, status):
